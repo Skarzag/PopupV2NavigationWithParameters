@@ -1,0 +1,34 @@
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:vm="clr-namespace:PopupV2NavigationWithParameters"
+               x:Class="PopupV2NavigationWithParameters.MessagePopupV2"
+               x:DataType="vm:MessagePopupVm"
+               HorizontalOptions="Center"
+               VerticalOptions="Center">
+
+        <Grid RowDefinitions="auto,auto,auto"
+              WidthRequest="200"
+              HeightRequest="200"
+                RowSpacing="10">
+
+            <Label Grid.Row="0"
+               TextColor="Black"
+               Text="{Binding Title, Mode=OneWay}" />
+
+            <Label Grid.Row="1"
+                   TextColor="Black"
+                    Text="{Binding Message, Mode=OneWay}" />
+
+            <Grid Grid.Row="2"
+                    ColumnDefinitions="*,*"
+                    ColumnSpacing="5">
+            <Button Grid.Column="0"
+                    Text="Cancel"
+                    Command="{Binding CloseCommand, Mode=OneTime}" />
+            <Button Grid.Column="1"
+                        Text="Confirm"
+                        Command="{Binding CloseCommand, Mode=OneTime}" />
+            </Grid>
+        </Grid>
+</toolkit:Popup>

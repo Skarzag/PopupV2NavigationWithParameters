@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:app="clr-namespace:PopupV2NavigationWithParameters"
+             x:Class="PopupV2NavigationWithParameters.MainPage"
+             x:DataType="app:MainPageVm">
+
+    <VerticalStackLayout>
+        <Button Text="Open popup v1 style"
+                Command="{Binding ShowPopupCommand, Mode=OneTime}" />
+        <Button Text="Open popup v2 style"
+                Command="{Binding ShowPopupV2Command, Mode=OneTime}" />
+    </VerticalStackLayout>
+
+</ContentPage>
