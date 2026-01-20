@@ -6,10 +6,12 @@
              x:DataType="app:MainPageVm">
 
     <VerticalStackLayout>
-        <Button Text="Open popup v1 style"
-                Command="{Binding ShowPopupCommand, Mode=OneTime}" />
-        <Button Text="Open popup v2 style"
-                Command="{Binding ShowPopupV2Command, Mode=OneTime}" />
+        <Button Text="Open popup no init data no return data"
+                Command="{Binding ShowBasicPopupCommand, Mode=OneTime}" />
+        <Button Text="Open popup with init data no return data"
+                Command="{Binding ShowPopupWithInitDataCommand, Mode=OneTime}" />
+        <Button Text="Open popup with init data + return data"
+                Command="{Binding ShowPopupWithInitDataReturnableCommand, Mode=OneTime}" />
     </VerticalStackLayout>
 
 </ContentPage>
