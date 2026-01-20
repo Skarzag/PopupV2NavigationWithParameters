@@ -64,19 +64,25 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="MessagePopupV2.xaml.cs">
-	    <DependentUpon>MessagePopupV2.xaml</DependentUpon>
+	  <Compile Update="PopupWithInitReturnable.xaml.cs">
+	    <DependentUpon>PopupWithInitReturnable.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="MessagePopup.xaml.cs">
-	    <DependentUpon>MessagePopup.xaml</DependentUpon>
+	  <Compile Update="PopupWithInit.xaml.cs">
+	    <DependentUpon>PopupWithInit.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="BasicPopup.xaml.cs">
+	    <DependentUpon>BasicPopup.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="MessagePopupV2.xaml">
+	  <MauiXaml Update="PopupWithInitReturnable.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="MessagePopup.xaml">
+	  <MauiXaml Update="PopupWithInit.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="BasicPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

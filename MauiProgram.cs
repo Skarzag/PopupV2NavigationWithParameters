@@ -24,9 +24,14 @@ public static class MauiProgram
         builder.Services.AddSingleton<IPopupMauiService, PopupMauiService>();
         builder.Services.AddTransient<MainPage, MainPageVm>();
 
-        builder.Services.AddTransientPopup<MessagePopup, MessagePopupVm>();
-        builder.Services.AddTransient<Func<MessagePopupVmInitData, MessagePopupV2>>(_ => initData => new MessagePopupV2(initData)); 
-        
+        builder.Services.AddTransientPopup<BasicPopup, BasicPopupVm>();
+
+        builder.Services.AddTransient<Func<PopupWithInitInitData, PopupWithInit>>(_ => initData => new PopupWithInit(_.GetRequiredService<PopupWithInitVm>(), initData));
+        builder.Services.AddTransient<PopupWithInitVm>();
+
+        builder.Services.AddTransient<Func<PopupWithInitReturnable_InitData, PopupWithInitReturnable>>(_ => initData => new PopupWithInitReturnable(_.GetRequiredService<PopupWithInitReturnableVm>(), initData));
+        builder.Services.AddTransient<PopupWithInitReturnableVm>();
+
         return builder.Build();
     }
 }

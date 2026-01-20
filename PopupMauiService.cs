@@ -1,68 +1,85 @@
 ﻿using CommunityToolkit.Maui;
-using System.ComponentModel;
+using CommunityToolkit.Maui.Extensions;
+using CommunityToolkit.Maui.Views;
 
 namespace PopupV2NavigationWithParameters;
 
-
-public interface IPopup<TInit>
-    where TInit : notnull
-{
-}
-
-public interface IPopupViewModel<TInit> : INotifyPropertyChanged, INotifyPropertyChanging
-    where TInit : notnull
-{
-    void Init(TInit initData);
-}
-
 public interface IPopupMauiService
 {
-    Task ShowPopupAsyncV1<TViewModel, TInit>(TInit initData, bool forceClosePreviousPopup = false)
-        where TViewModel : IPopupViewModel<TInit>
+    Task ShowPopupAsync<TView>(INavigation nav, bool closePreviousPopup = false)
+    where TView : Popup;
+
+    Task ShowPopupAsync<TView, TInit>(INavigation nav, TInit initData, bool closePreviousPopup = false)
+        where TView : Popup
         where TInit : notnull;
 
-    Task ShowPopupAsyncV2<TView, TInit>(TInit initData, bool forceClosePreviousPopup = false)
-    where TView : IPopup<TInit>
-    where TInit : notnull;
+    Task<TReturn?> ShowPopupAsync<TView, TReturn>(INavigation nav, bool closePreviousPopup = false)
+        where TView : Popup<TReturn?>;
+
+    Task<TReturn?> ShowPopupAsync<TView, TInit, TReturn>(INavigation nav, TInit initData, bool closePreviousPopup = false)
+            where TView : Popup<TReturn?>
+            where TInit : notnull;
 }
 
 internal class PopupMauiService(IPopupService popupService) : IPopupMauiService
 {
     private readonly IPopupService _popupService = popupService;
 
-    //in this example, i'm just replicating the V1 style... but don't know how to pass data
-    public async Task ShowPopupAsyncV1<TViewModel, TInit>(TInit initData, bool forceClosePreviousPopup)
-        where TViewModel : IPopupViewModel<TInit>
-        where TInit : notnull
+    public async Task ShowPopupAsync<TView>(INavigation nav, bool forceClosePreviousPopup = false) 
+        where TView : Popup
     {
-        var navigation = Application.Current?.Windows[0].Page?.Navigation ?? throw new Exception();
+        nav ??= Application.Current?.Windows[0].Page?.Navigation ?? throw new NullReferenceException($"No Navigation available to show popup {typeof(TView)}");
 
         if (forceClosePreviousPopup)
-            await _popupService.ClosePopupAsync(navigation);
+            await _popupService.ClosePopupAsync(nav);
 
-        await _popupService.ShowPopupAsync<TViewModel>(navigation);
+        var laPopup = IPlatformApplication.Current?.Services.GetService<TView>() ?? throw new NullReferenceException($"Error while instantiating a popup of type {typeof(TView)}");
 
-        //WHAT WE NEED IS 
-        //await _popupService.ShowPopupAsync<TViewModel>(navigation, onOpened: vm => vm.Init(initData));
-        //or
-        //await _popupService.ShowPopupAsync<TViewModel>(navigation, initData);
+        await nav.ShowPopupAsync<TView>(laPopup);
     }
 
-    //in this example i thought that i can pass an data initiated popup to pass the data in the "famous" Opened event
-    //but we can't pass popup directly to ShowPopupAsync... i've hallucinated i guess 😅
-    //this was my last attempt to do this, sadly... i'm blocked
-    public async Task ShowPopupAsyncV2<TView, TInit>(TInit initData, bool forceClosePreviousPopup)
-    where TView : IPopup<TInit>
-    where TInit : notnull
+    public async Task ShowPopupAsync<TView, TInit>(INavigation nav, TInit initData, bool forceClosePreviousPopup = false)
+        where TView : Popup
+        where TInit : notnull
     {
-        var navigation = Application.Current?.Windows[0].Page?.Navigation ?? throw new Exception();
+        nav ??= Application.Current?.Windows[0].Page?.Navigation ?? throw new NullReferenceException($"No Navigation available to show popup {typeof(TView)}");
 
         if (forceClosePreviousPopup)
-            await _popupService.ClosePopupAsync(navigation);
+            await _popupService.ClosePopupAsync(nav);
 
-        // Create a popup with initiated data
-        var laPopup = IPlatformApplication.Current.Services.GetService<Func<TInit, TView>>()(initData);
+        var laPopup = IPlatformApplication.Current?.Services?.GetRequiredService<Func<TInit, TView>>()(initData) ?? throw new NullReferenceException($"Error while instantiating a popup of type {typeof(TView)}");
 
-        //_popupService.ShowPopupAsync(navigation, laPopup);
+        await nav.ShowPopupAsync<TView>(laPopup);
+    }
+
+    public async Task<TReturn?> ShowPopupAsync<TView, TReturn>(INavigation nav, bool forceClosePreviousPopup = false)
+        where TView : Popup<TReturn?>
+    { 
+        nav ??= Application.Current?.Windows[0].Page?.Navigation ?? throw new NullReferenceException($"No Navigation available to show popup {typeof(TView)}");
+
+        if (forceClosePreviousPopup)
+            await _popupService.ClosePopupAsync(nav);
+
+        var laPopup = IPlatformApplication.Current?.Services.GetService<TView>() ?? throw new NullReferenceException($"Error while instantiating a popup of type {typeof(TView)}");
+
+        var result = await nav.ShowPopupAsync<TReturn>(laPopup);
+
+        return result.Result;
+    }
+
+    public async Task<TReturn?> ShowPopupAsync<TView, TInit, TReturn>(INavigation nav, TInit initData, bool forceClosePreviousPopup = false)
+        where TView : Popup<TReturn?>
+        where TInit : notnull
+    {
+        nav ??= Application.Current?.Windows[0].Page?.Navigation ?? throw new NullReferenceException($"No Navigation available to show popup {typeof(TView)}");
+
+        if (forceClosePreviousPopup)
+            await _popupService.ClosePopupAsync(nav);
+
+        var laPopup = IPlatformApplication.Current?.Services?.GetRequiredService<Func<TInit, TView>>()(initData) ?? throw new NullReferenceException($"Error while instantiating a popup of type {typeof(TView)}");
+
+        var result = await nav.ShowPopupAsync<TReturn>(laPopup);
+
+        return result.Result;
     }
 }

@@ -18,14 +18,21 @@ public partial class MainPageVm(IPopupMauiService popupMauiService) : Observable
     private readonly IPopupMauiService popupMauiService = popupMauiService;
 
     [RelayCommand]
-    private async Task ShowPopup()
+    private async Task ShowBasicPopup() 
     {
-        await popupMauiService.ShowPopupAsyncV1<MessagePopupVm, MessagePopupVmInitData>(new MessagePopupVmInitData("A title", "A message"));
+        await popupMauiService.ShowPopupAsync<BasicPopup>(Application.Current?.Windows[0].Page?.Navigation);
     }
 
     [RelayCommand]
-    private async Task ShowPopupV2()
+    private async Task ShowPopupWithInitData()
     {
-        await popupMauiService.ShowPopupAsyncV2<MessagePopupV2, MessagePopupVmInitData>(new MessagePopupVmInitData("A title", "A message"));
+        await popupMauiService.ShowPopupAsync<PopupWithInit, PopupWithInitInitData>(Application.Current?.Windows[0].Page?.Navigation, new PopupWithInitInitData("InitatedTitle", "InitiatedMessage"));
+    }
+
+    [RelayCommand]
+    private async Task ShowPopupWithInitDataReturnable()
+    {
+        var returnedData = await popupMauiService.ShowPopupAsync<PopupWithInitReturnable, PopupWithInitReturnable_InitData, PopupWithInitReturnable_ReturnData>(Application.Current?.Windows[0].Page?.Navigation, new PopupWithInitReturnable_InitData("InitatedTitle", "InitiatedMessage"));
+        await popupMauiService.ShowPopupAsync<PopupWithInit, PopupWithInitInitData>(Application.Current?.Windows[0].Page?.Navigation, new PopupWithInitInitData("Returned Data", returnedData?.ReturnMessage));
     }
 }
